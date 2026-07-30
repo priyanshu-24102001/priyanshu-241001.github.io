@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#08080a; --bg-1:#0d0d10; --bg-2:#121216; --bg-3:#1a1a1f;
+    --grid:#191920; --grid-2:#24242b;
+    --line:rgba(255,255,255,.06); --line-2:rgba(255,255,255,.12);
+    --ink:#f3f1ec; --ink-2:#8a887f; --ink-3:#54544d;
+    --paper:#f0eee6; --paper-2:#e4e1d7; --paper-ink:#111112; --paper-ink-2:#57554c;
+    --orange:#ff5a00; --orange-hi:#ff8038; --orange-deep:#e64f00; --orange-dim:rgba(255,90,0,.22);
+    --violet:#8477ff; --gold:#f5b115; --green:#5cb37a;
+    --two:1fr 1fr; --three:repeat(3,1fr); --metrics:repeat(4,1fr);
+    --hero-cols:1fr 1.06fr; --nav-links:flex; --padx:clamp(18px,5vw,80px);
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 24px 60px -46px rgba(0,0,0,.8);
+    --glow:0 0 34px -20px rgba(255,90,0,.5);
+  }
+  #pr-os[data-theme="light"]{
+    --bg:#eceae1; --bg-1:#f6f4ee; --bg-2:#efece4; --bg-3:#e6e3da;
+    --grid:#ddd9cf; --grid-2:#cfcbc0;
+    --line:rgba(30,25,15,.09); --line-2:rgba(30,25,15,.18);
+    --ink:#14130d; --ink-2:#5b574c; --ink-3:#938e7f;
+    --paper:#14130d; --paper-2:#232219; --paper-ink:#f6f4ee; --paper-ink-2:#b4b0a2;
+    --orange:#e64f00; --orange-hi:#ff6a1a; --orange-deep:#cc4700; --orange-dim:rgba(230,79,0,.16);
+    --violet:#6a5cbe; --gold:#c98700; --green:#3f9159;
+    --shadow:0 1px 2px rgba(80,60,30,.06),0 24px 60px -48px rgba(80,60,30,.3);
+    --glow:0 0 34px -22px rgba(230,79,0,.4);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.5;overflow-x:hidden;transition:background .5s,color .5s}
+  ::selection{background:var(--orange);color:#08080a}
+  a{color:var(--orange);text-decoration:none;transition:color .2s}
+  a:hover{color:var(--orange-hi)}
+  button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+  ::-webkit-scrollbar{width:10px;height:10px}
+  ::-webkit-scrollbar-track{background:var(--bg)}
+  ::-webkit-scrollbar-thumb{background:var(--bg-3);border:3px solid var(--bg)}
+  .mono{font-family:'Geist Mono',ui-monospace,monospace}
+  .disp{font-weight:800;letter-spacing:-.045em;line-height:.9}
+  @keyframes prPulse{0%{transform:scale(1);opacity:.8}70%{transform:scale(2.6);opacity:0}100%{opacity:0}}
+  @keyframes prBlink{0%,50%{opacity:1}51%,100%{opacity:0}}
+  @keyframes prDash{to{stroke-dashoffset:-14}}
+  @keyframes prReveal{from{opacity:.001;transform:translateY(10px)}to{opacity:1;transform:none}}
+  [data-reveal]{animation:prReveal .55s cubic-bezier(.22,.7,.3,1) both}
+  .cmd{position:relative;overflow:hidden;isolation:isolate}
+  .cmd::before{content:"";position:absolute;inset:0;background:radial-gradient(90px 60px at var(--mx,50%) var(--my,50%),rgba(255,255,255,.09),transparent 72%);opacity:0;transition:opacity .25s;z-index:0}
+  .cmd:hover::before{opacity:1}
+  .cmd>*{position:relative;z-index:1}
+  .eyebrow{display:flex;align-items:center;gap:14px;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-3)}
+  .sec-h{font-size:clamp(30px,4vw,54px);font-weight:700;letter-spacing:-.035em;line-height:1.0;margin-top:26px}
+  @media(max-width:1040px){:root{--metrics:repeat(3,1fr);--three:repeat(2,1fr);--nav-links:none}#pr-os{--hero-cols:1fr}}
+  @media(max-width:760px){:root{--two:1fr;--three:1fr;--metrics:repeat(2,1fr)}
+    #pr-os h1{font-size:clamp(40px,13vw,68px)!important}
+    #pr-os .hero-actions{flex-direction:column;align-items:stretch}
+    #pr-os .hero-actions>a{justify-content:center}
+    #pr-os .proj-flow{overflow-x:auto;flex-wrap:nowrap!important;-webkit-overflow-scrolling:touch;padding-bottom:6px}
+    #pr-os .spec-row{grid-template-columns:1fr!important;gap:4px!important}
+    #pr-os .cap-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+    #pr-os .tl-row{padding-left:34px!important}
+    #pr-os .disp{overflow-wrap:break-word}
+    #pr-os a div.mono{overflow-wrap:anywhere}
+    #pr-os h2.disp{font-size:clamp(38px,11vw,64px)!important}
+    #pr-os .sec-h{font-size:clamp(26px,7.5vw,40px)!important}
+    html,body{overflow-x:clip}}
+  @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation-duration:.001ms!important}}
+</style>
+</helmet>
+
+<div id="pr-os" ref="{{ rootRef }}" style="position:relative;background:var(--bg);color:var(--ink);min-height:100vh;overflow:hidden">
+
+<canvas ref="{{ globalFieldRef }}" aria-hidden="true" style="position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none"></canvas>
+
+<div style="position:relative;z-index:1">
+
+  <!-- CONTROL-STRIP HEADER -->
+  <header style="position:sticky;top:0;z-index:90;backdrop-filter:blur(20px);background:color-mix(in srgb,var(--bg) 74%,transparent);border-bottom:1px solid var(--line)">
+    <div style="display:flex;align-items:center;gap:22px;padding:0 var(--padx);height:64px;max-width:1520px;margin:0 auto">
+      <a href="#identity" style="display:flex;align-items:center;gap:12px;color:var(--ink)">
+        <span style="font-size:16px;font-weight:700;letter-spacing:-.03em">Priyanshu Raj</span>
+        <span class="mono" style="font-size:9.5px;letter-spacing:.2em;color:var(--ink-3);text-transform:uppercase">Data Platform</span>
+      </a>
+      <div style="flex:1"></div>
+      <nav class="mono" style="display:var(--nav-links);align-items:center;gap:22px;font-size:12px;letter-spacing:.04em">
+        <a href="#systems" style="color:var(--ink-2)">systems</a>
+        <a href="#impact" style="color:var(--ink-2)">telemetry</a>
+        <a href="#capabilities" style="color:var(--ink-2)">capabilities</a>
+        <a href="#history" style="color:var(--ink-2)">history</a>
+        <a href="#projects" style="color:var(--ink-2)">work</a>
+      </nav>
+      <div class="mono" style="display:flex;align-items:center;gap:8px;font-size:11px;letter-spacing:.05em;color:var(--ink-2)">
+        <span style="position:relative;width:6px;height:6px"><span style="position:absolute;inset:0;border-radius:50%;background:var(--green)"></span><span style="position:absolute;inset:0;border-radius:50%;background:var(--green);animation:prPulse 3s ease-out infinite"></span></span>
+        available
+      </div>
+      <button onClick="{{ toggleTheme }}" aria-label="Toggle theme" class="mono" style="display:grid;place-items:center;width:30px;height:30px;color:var(--ink-3);font-size:13px;transition:color .2s" style-hover="color:var(--ink)">{{ themeIcon }}</button>
+      <a href="#contact" class="mono" style="display:inline-flex;align-items:center;gap:7px;font-size:12px;letter-spacing:.04em;color:var(--ink)" style-hover="color:var(--orange)">connect <span style="color:var(--orange)">↗</span></a>
+    </div>
+  </header>
+
+  <!-- HERO (expressive · large field) -->
+  <section id="identity" style="position:relative;max-width:1520px;margin:0 auto;padding:clamp(40px,6vw,96px) var(--padx) clamp(48px,6vw,104px)">
+    <div style="position:relative;z-index:1;display:grid;grid-template-columns:var(--hero-cols);gap:clamp(24px,4vw,64px);align-items:center">
+      <div data-reveal>
+        <div class="eyebrow"><span style="width:8px;height:8px;background:var(--orange);border-radius:2px"></span> Data Platform · Analytics Engineering</div>
+        <h1 class="disp" style="font-size:clamp(58px,7.8vw,120px);margin:30px 0 0;text-wrap:balance">Priyanshu<br>Raj<span style="color:var(--orange)">.</span></h1>
+        <p style="font-size:clamp(19px,2.1vw,26px);color:var(--ink);margin-top:36px;max-width:20ch;line-height:1.24;letter-spacing:-.02em;font-weight:500;text-wrap:pretty">I build the systems that make data <span style="color:var(--orange)">trustworthy</span>.</p>
+        <div style="margin-top:26px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+          <span class="disp" style="font-size:clamp(32px,3.2vw,46px);color:var(--orange)">1M+</span>
+          <span style="color:var(--ink-2);font-size:14.5px;line-height:1.5;letter-spacing:.01em">daily interactions instrumented,<br>governed and made queryable.</span>
+        </div>
+        <div class="hero-actions" style="display:flex;flex-wrap:wrap;gap:12px;margin-top:40px">
+          <a href="#projects" class="mono cmd" style="display:inline-flex;align-items:center;gap:11px;padding:16px 26px;background:var(--orange);color:#fff;font-size:13px;font-weight:700;letter-spacing:.02em;border-radius:0;transition:background .25s,box-shadow .3s" style-hover="background:var(--orange-hi);box-shadow:var(--glow)"><span style="opacity:.65">&gt;_</span>Explore the work<span style="display:inline-block;width:8px;height:15px;background:#fff;animation:prBlink 1.1s step-end infinite"></span></a>
+
+        </div>
+      </div>
+      <!-- circuit topology -->
+      <div data-reveal style="position:relative">
+        <div style="position:relative;min-height:300px">{{ graph }}</div>
+        <div style="min-height:120px;margin-top:16px;padding:20px;border:1px solid var(--line-2);background:color-mix(in srgb,var(--bg-1) 60%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)">
+          <sc-if value="{{ hasHover }}" hint-placeholder-val="{{ false }}">
+            <div>
+              <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+                <span style="width:14px;height:14px;background:var(--orange)"></span>
+                <b style="font-size:19px;letter-spacing:-.02em">{{ hoverData.id }}</b>
+                <span class="mono" style="font-size:10px;text-transform:uppercase;letter-spacing:.18em;color:var(--ink-3)">{{ hoverData.groupLabel }}</span>
+              </div>
+              <p style="color:var(--ink-2);font-size:14px;margin-top:11px;max-width:52ch;line-height:1.55;text-wrap:pretty">{{ hoverData.summary }}</p>
+              <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:14px">
+                <sc-for list="{{ hoverData.metrics }}" as="m" hint-placeholder-count="2">
+                  <span class="mono" style="font-size:12px;color:var(--orange);border:1px solid var(--line-2);padding:5px 9px">{{ m }}</span>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+          <sc-if value="{{ noHover }}" hint-placeholder-val="{{ true }}">
+            <div class="mono" style="font-size:13.5px;line-height:1.65;display:flex;align-items:center;gap:11px">
+              <span style="width:8px;height:15px;background:var(--orange);animation:prBlink 1.1s step-end infinite;flex-shrink:0"></span>
+              <span style="color:var(--ink-2)">hover a node to trace what it built — every technology routes to real projects, metrics &amp; outcomes.</span>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SYSTEMS (calm · typographic trio) -->
+  <section id="systems" style="max-width:1520px;margin:0 auto;padding:clamp(60px,8vw,140px) var(--padx)">
+    <div data-reveal style="max-width:720px">
+      <div class="eyebrow"><span style="color:var(--orange)">01</span><span>In production</span></div>
+      <h2 class="sec-h" style="max-width:16ch">What I keep running in production.</h2>
+    </div>
+    <div style="display:grid;grid-template-columns:var(--three);gap:clamp(28px,4vw,72px);margin-top:clamp(48px,6vw,88px)">
+      <sc-for list="{{ systems }}" as="s" hint-placeholder-count="3">
+        <div data-reveal>
+          <div style="display:flex;align-items:baseline;gap:12px">
+            <span class="disp" style="font-size:clamp(48px,5vw,72px);color:var(--orange)">{{ s.stat }}</span>
+          </div>
+          <div class="mono" style="font-size:11px;color:var(--ink-3);letter-spacing:.02em;margin-top:8px">{{ s.statLabel }}</div>
+          <div style="height:1px;background:var(--line);margin:22px 0"></div>
+          <h3 style="font-size:19px;letter-spacing:-.015em;font-weight:600">{{ s.title }}</h3>
+          <p style="color:var(--ink-2);font-size:14px;margin-top:11px;line-height:1.65;text-wrap:pretty">{{ s.body }}</p>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- TELEMETRY (dense · typography, no boxes) -->
+  <section id="impact" style="max-width:1520px;margin:0 auto;padding:clamp(48px,6vw,96px) var(--padx)">
+    <div data-reveal style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px;max-width:none">
+      <div>
+        <div class="eyebrow"><span style="color:var(--orange)">02</span><span>Telemetry</span></div>
+        <h2 class="sec-h">Measured, not claimed.</h2>
+      </div>
+      <div class="mono" style="font-size:11px;color:var(--ink-3);display:flex;align-items:center;gap:8px;letter-spacing:.04em"><span style="width:5px;height:5px;border-radius:50%;background:var(--orange)"></span>live from deployments</div>
+    </div>
+    <div style="display:grid;grid-template-columns:var(--metrics);gap:0;margin-top:clamp(40px,5vw,72px);border-top:1px solid var(--line-2)">
+      <sc-for list="{{ metrics }}" as="m" hint-placeholder-count="12">
+        <div style="padding:22px 22px 22px 0;border-bottom:1px solid var(--line);position:relative">
+          <div class="mono" style="font-size:10px;color:var(--ink-3);letter-spacing:.06em">{{ m.code }}</div>
+          <div class="disp" style="font-size:clamp(34px,4vw,50px);font-weight:800;color:var(--ink);margin-top:14px"><span data-count data-num="{{ m.num }}" data-dec="{{ m.dec }}" data-suf="{{ m.suf }}">{{ m.disp }}</span></div>
+          <div style="color:var(--ink-2);font-size:12.5px;margin-top:8px;max-width:22ch;line-height:1.45;text-wrap:pretty">{{ m.lbl }}</div>
+          <div aria-hidden="true" style="display:flex;gap:3px;margin-top:18px">
+            <sc-for list="{{ m.cubes }}" as="c" hint-placeholder-count="10">
+              <span style="width:5px;height:5px;background:{{ c }}"></span>
+            </sc-for>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- CAPABILITIES (open · cluster graph) -->
+  <section id="capabilities" style="max-width:1520px;margin:0 auto;padding:clamp(60px,8vw,140px) var(--padx)">
+    <div data-reveal style="max-width:760px">
+      <div class="eyebrow"><span style="color:var(--orange)">03</span><span>Capability graph</span></div>
+      <h2 class="sec-h">A system, not a checklist.</h2>
+      <p style="color:var(--ink-2);font-size:15px;margin-top:20px;max-width:52ch;line-height:1.6;text-wrap:pretty">Four domains, one connected practice. Hover any capability to trace where it lives across the graph — and everywhere it appears on the page.</p>
+    </div>
+    <div class="cap-scroll" data-reveal style="margin-top:clamp(40px,5vw,72px)">
+      <div style="min-width:720px">{{ capGraph }}</div>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:24px;margin-top:32px">
+      <sc-for list="{{ capLegend }}" as="d" hint-placeholder-count="4">
+        <div style="display:flex;align-items:center;gap:9px">
+          <span style="width:9px;height:9px;border-radius:2px;background:{{ d.dot }}"></span>
+          <span class="mono" style="font-size:12px;color:var(--ink-2);letter-spacing:.02em">{{ d.label }}</span>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- COMMIT HISTORY (minimal · hairline log) -->
+  <section id="history" style="max-width:1520px;margin:0 auto;padding:clamp(48px,6vw,96px) var(--padx)">
+    <div data-reveal style="max-width:720px">
+      <div class="eyebrow"><span style="color:var(--orange)">04</span><span>Commit history</span></div>
+      <h2 class="sec-h">A career, committed.</h2>
+    </div>
+    <div style="margin-top:clamp(40px,5vw,72px);position:relative">
+      <div style="position:absolute;left:5px;top:10px;bottom:10px;width:1px;background:linear-gradient(180deg,var(--orange),var(--line) 38%)"></div>
+      <div style="display:flex;flex-direction:column">
+        <sc-for list="{{ timeline }}" as="t" hint-placeholder-count="4">
+          <div style="position:relative;border-bottom:1px solid var(--line)">
+            <button onClick="{{ t.toggle }}" class="tl-row" style="width:100%;text-align:left;padding:26px 8px 26px 40px;display:block;position:relative;transition:opacity .2s" style-hover="opacity:.82">
+              <span style="position:absolute;left:0;top:32px;width:11px;height:11px;border-radius:3px;border:1px solid {{ t.dotBorder }};background:{{ t.dotFill }}"></span>
+              <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+                <span class="mono" style="font-size:11.5px;color:var(--ink-3)">{{ t.period }}</span>
+                <sc-if value="{{ t.current }}" hint-placeholder-val="{{ false }}"><span class="mono" style="font-size:9.5px;text-transform:uppercase;letter-spacing:.14em;color:var(--orange)">● head</span></sc-if>
+                <span style="flex:1"></span>
+                <span class="mono" style="color:var(--ink-3);font-size:15px;transform:rotate({{ t.rot }});transition:transform .25s">›</span>
+              </div>
+              <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-top:12px">
+                <h3 style="font-size:22px;letter-spacing:-.02em;font-weight:600">{{ t.role }}</h3>
+                <span class="mono" style="color:var(--ink-2);font-size:13px">{{ t.org }}</span>
+              </div>
+              <sc-if value="{{ t.open }}" hint-placeholder-val="{{ true }}">
+                <div style="margin-top:24px;display:grid;grid-template-columns:var(--two);gap:28px 44px">
+                  <sc-for list="{{ t.sections }}" as="sec" hint-placeholder-count="2">
+                    <div>
+                      <div class="mono" style="font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);margin-bottom:14px">{{ sec.label }}</div>
+                      <ul style="list-style:none;display:flex;flex-direction:column;gap:10px">
+                        <sc-for list="{{ sec.items }}" as="it" hint-placeholder-count="3">
+                          <li style="font-size:14px;color:var(--ink-2);display:flex;gap:12px;line-height:1.55;text-wrap:pretty"><span style="color:var(--orange);flex-shrink:0">·</span>{{ it }}</li>
+                        </sc-for>
+                      </ul>
+                    </div>
+                  </sc-for>
+                </div>
+                <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:24px">
+                  <sc-for list="{{ t.tech }}" as="tk" hint-placeholder-count="4">
+                    <span data-tech="{{ tk }}" class="mono" style="font-size:11px;color:var(--ink-3);padding:4px 0;transition:color .2s">{{ tk }}<span style="color:var(--line-2)"> ·</span></span>
+                  </sc-for>
+                </div>
+              </sc-if>
+            </button>
+          </div>
+        </sc-for>
+        <div class="tl-row" style="position:relative;padding:26px 8px 6px 40px">
+          <span style="position:absolute;left:0;top:32px;width:11px;height:11px;border-radius:3px;border:1px solid var(--line-2);background:var(--bg)"></span>
+          <div class="mono" style="font-size:11px;color:var(--ink-3);display:flex;align-items:center;gap:12px">2019 — 2023 · earliest</div>
+          <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-top:12px">
+            <h3 style="font-size:18px;letter-spacing:-.02em;font-weight:600">B.E. Electronics &amp; Communication Engineering</h3>
+            <span class="mono" style="color:var(--ink-2);font-size:13px">Ramaiah Institute of Technology</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WORK (detailed · spec sheets) -->
+  <section id="projects" style="max-width:1520px;margin:0 auto;padding:clamp(60px,8vw,140px) var(--padx)">
+    <div data-reveal style="max-width:720px">
+      <div class="eyebrow"><span style="color:var(--orange)">05</span><span>Selected work</span></div>
+      <h2 class="sec-h">Documented like engineering.</h2>
+    </div>
+    <div style="margin-top:clamp(40px,5vw,72px);border-top:1px solid var(--line-2)">
+      <sc-for list="{{ projects }}" as="p" hint-placeholder-count="3">
+        <div style="border-bottom:1px solid var(--line)">
+          <button onClick="{{ p.toggle }}" style="width:100%;text-align:left;padding:clamp(26px,3vw,44px) 0;display:grid;grid-template-columns:auto 1fr auto;gap:clamp(18px,3vw,40px);align-items:start;transition:opacity .2s" style-hover="opacity:.85">
+            <span class="disp mono" style="font-size:20px;color:var(--orange);padding-top:4px">{{ p.no }}</span>
+            <div>
+              <h3 style="font-size:clamp(24px,3vw,38px);letter-spacing:-.03em;font-weight:600;line-height:1.05">{{ p.title }}</h3>
+              <p style="color:var(--ink-2);font-size:14.5px;margin-top:14px;max-width:64ch;line-height:1.6;text-wrap:pretty">{{ p.desc }}</p>
+              <div class="proj-flow" style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:20px">
+                <sc-for list="{{ p.flow }}" as="f" hint-placeholder-count="5">
+                  <span class="mono" style="font-size:11px;color:var(--ink-2);white-space:nowrap">{{ f.name }}</span>
+                  <sc-if value="{{ f.notLast }}" hint-placeholder-val="{{ true }}"><span style="color:var(--orange)">→</span></sc-if>
+                </sc-for>
+              </div>
+            </div>
+            <span class="mono" style="color:var(--ink-3);font-size:11px;display:flex;align-items:center;gap:8px;letter-spacing:.06em;padding-top:8px;white-space:nowrap">{{ p.action }}<span style="font-size:15px;transform:rotate({{ p.rot }});transition:transform .25s">›</span></span>
+          </button>
+          <sc-if value="{{ p.open }}" hint-placeholder-val="{{ true }}">
+            <div style="padding:6px 0 clamp(34px,4vw,52px);max-width:940px">
+              <sc-for list="{{ p.sections }}" as="sec" hint-placeholder-count="6">
+                <div class="spec-row" style="display:grid;grid-template-columns:180px 1fr;gap:20px 40px;padding:16px 0;border-top:1px solid var(--line)">
+                  <div class="mono" style="font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--orange)">{{ sec.label }}</div>
+                  <p style="font-size:14px;color:var(--ink);line-height:1.6;text-wrap:pretty">{{ sec.body }}</p>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- INITIATIVES (minimal log) -->
+  <section style="max-width:1520px;margin:0 auto;padding:clamp(48px,6vw,96px) var(--padx)">
+    <div data-reveal style="max-width:720px">
+      <div class="eyebrow"><span style="color:var(--orange)">06</span><span>Active workstreams</span></div>
+      <h2 class="sec-h">What's running right now.</h2>
+    </div>
+    <div style="margin-top:clamp(36px,4vw,60px);border-top:1px solid var(--line)">
+      <sc-for list="{{ initiatives }}" as="i" hint-placeholder-count="4">
+        <div data-reveal style="padding:22px 0;display:flex;gap:20px;align-items:baseline;flex-wrap:wrap;border-bottom:1px solid var(--line)">
+          <span class="mono" style="font-size:11px;color:var(--ink-3);width:46px;flex-shrink:0">{{ i.id }}</span>
+          <span class="mono" style="font-size:10px;color:{{ i.color }};letter-spacing:.08em;text-transform:uppercase;width:96px;flex-shrink:0">{{ i.status }}</span>
+          <div style="flex:1;min-width:220px">
+            <div style="font-size:16px;font-weight:600;letter-spacing:-.01em">{{ i.title }}</div>
+            <div style="color:var(--ink-3);font-size:13px;margin-top:4px;line-height:1.5;text-wrap:pretty">{{ i.note }}</div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- CHANNEL (expressive · large field) -->
+  <section id="contact" style="position:relative;padding:clamp(60px,8vw,140px) var(--padx) clamp(48px,6vw,88px);margin-top:clamp(40px,5vw,80px)">
+    <canvas ref="{{ footerFieldRef }}" aria-hidden="true" style="position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;-webkit-mask-image:linear-gradient(to bottom,transparent,#000 42%);mask-image:linear-gradient(to bottom,transparent,#000 42%)"></canvas>
+    <div style="position:relative;z-index:1;max-width:1520px;margin:0 auto">
+      <div style="display:grid;grid-template-columns:var(--hero-cols);gap:clamp(28px,5vw,72px);align-items:start">
+        <div data-reveal>
+          <div class="eyebrow"><span style="color:var(--orange)">07</span><span>Let's connect</span></div>
+          <h2 class="disp" style="font-size:clamp(48px,7vw,96px);margin-top:28px;text-wrap:balance">Let's<br>connect<span style="color:var(--orange)">.</span></h2>
+          <p style="color:var(--ink-2);margin-top:26px;max-width:32ch;font-size:16px;line-height:1.6;text-wrap:pretty">I'm looking for teams that treat data as infrastructure. If that's you, let's talk.</p>
+          <div style="margin-top:40px">
+            <div class="mono" style="color:var(--ink-3);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase">status</div>
+            <div style="display:flex;align-items:center;gap:13px;margin-top:12px">
+              <span style="position:relative;width:11px;height:11px"><span style="position:absolute;inset:0;border-radius:50%;background:var(--green)"></span><span style="position:absolute;inset:0;border-radius:50%;background:var(--green);animation:prPulse 2.8s ease-out infinite"></span></span>
+              <span class="disp" style="font-size:clamp(20px,2vw,28px);color:var(--green)">Available</span>
+            </div>
+          </div>
+        </div>
+        <div data-reveal style="display:flex;flex-direction:column">
+          <sc-for list="{{ endpoints }}" as="e" hint-placeholder-count="3">
+            <a href="{{ e.href }}" class="cmd" style="padding:22px 12px;display:flex;align-items:center;gap:18px;border-top:1px solid var(--line);transition:background .25s" style-hover="background:var(--bg-2)">
+              <span class="mono" style="font-size:11px;color:var(--orange);width:26px">{{ e.method }}</span>
+              <div style="flex:1">
+                <div style="font-size:17px;font-weight:600;color:var(--ink)">{{ e.label }}</div>
+                <div class="mono" style="font-size:12.5px;color:var(--ink-3);margin-top:3px">{{ e.value }}</div>
+              </div>
+              <span style="color:var(--ink-3)">↗</span>
+            </a>
+          </sc-for>
+          <div style="padding:24px 4px 0;border-top:1px solid var(--line);margin-top:0">
+            <div class="mono" style="font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)">preferred roles</div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:14px">
+              <sc-for list="{{ roles }}" as="r" hint-placeholder-count="4">
+                <span class="mono" style="font-size:12.5px;color:var(--ink-2)">{{ r }}</span>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:clamp(56px,7vw,96px);padding-top:22px;border-top:1px solid var(--line);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px" class="mono">
+        <span style="font-size:11.5px;color:var(--ink-3);letter-spacing:.04em">© {{ year }} Priyanshu Raj</span>
+        <span style="font-size:11.5px;color:var(--ink-3);letter-spacing:.04em">Data Platform Engineer · <span style="color:var(--orange)">available for work</span></span>
+      </div>
+    </div>
+  </section>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;100%&quot;,&quot;height&quot;:900}}">
+class Component extends DCLogic {
+  constructor(props){
+    super(props);
+    this.rootRef = React.createRef();
+    this.globalFieldRef = React.createRef();
+    this.footerFieldRef = React.createRef();
+    this.GROUPS = {core:{label:'core'},lang:{label:'language'},plat:{label:'platform'},prac:{label:'practice'},sys:{label:'system'}};
+    this.NODES = [
+      {id:'Analytics',g:'core',x:380,y:270,r:26,summary:'The center of gravity — turning raw events into trusted, queryable insight.',metrics:['50+ features','1M+ daily events']},
+      {id:'SQL',g:'lang',x:150,y:120,r:18,summary:'Warehouse modelling, reporting logic and query performance tuning.',metrics:['35% faster queries','4TB+ processed']},
+      {id:'Python',g:'lang',x:120,y:300,r:18,summary:'Automation, API integration and pipeline orchestration.',metrics:['10+ workflows automated','15 hrs saved weekly']},
+      {id:'Databricks',g:'plat',x:400,y:96,r:19,summary:'Lakehouse compute, SQL warehouses and Genie AI spaces.',metrics:['35% faster processing']},
+      {id:'Snowplow',g:'plat',x:610,y:120,r:17,summary:'Event collection and behavioural data pipelines.',metrics:['99.9% accuracy']},
+      {id:'Avo',g:'plat',x:650,y:270,r:17,summary:'Tracking-plan governance and implementation validation.',metrics:['30% consistency']},
+      {id:'Warehousing',g:'plat',x:560,y:70,r:16,summary:'Governed, analytics-ready datasets with clear ownership.',metrics:['4TB+ processed']},
+      {id:'Tracking',g:'prac',x:560,y:420,r:17,summary:'Instrumentation across 50+ product features.',metrics:['99.9% accuracy','20% journey visibility']},
+      {id:'Governance',g:'prac',x:380,y:450,r:18,summary:'Schema validation, ownership and access control.',metrics:['30% consistency','15% data recovered']},
+      {id:'Automation',g:'prac',x:130,y:440,r:16,summary:'Removing manual reporting and operational toil.',metrics:['15 hrs/week','40% faster deploys']},
+      {id:'Monitoring',g:'prac',x:90,y:210,r:16,summary:'Reliability, alerting and incident response.',metrics:['50% MTTR reduction']},
+      {id:'Backend',g:'sys',x:250,y:180,r:17,summary:'Services, integrations and data contracts.',metrics:['25% faster onboarding']},
+      {id:'APIs',g:'sys',x:660,y:420,r:17,summary:'Partner integrations and validated ingestion.',metrics:['automated ingestion']},
+      {id:'Pipelines',g:'sys',x:230,y:450,r:17,summary:'Ingestion, transformation and delivery flows.',metrics:['4TB+ processed','40% faster deploys']}
+    ];
+    this.EDGES = [
+      ['Analytics','SQL'],['Analytics','Python'],['Analytics','Databricks'],['Analytics','Tracking'],['Analytics','Governance'],['Analytics','Monitoring'],['Analytics','Backend'],
+      ['SQL','Databricks'],['SQL','Warehousing'],['SQL','Pipelines'],['SQL','Backend'],
+      ['Python','Automation'],['Python','Pipelines'],['Python','APIs'],['Python','Backend'],
+      ['Databricks','Warehousing'],['Databricks','Pipelines'],['Databricks','Snowplow'],
+      ['Snowplow','Tracking'],['Snowplow','Warehousing'],['Snowplow','Avo'],
+      ['Avo','Tracking'],['Avo','Governance'],['Avo','APIs'],
+      ['Tracking','Governance'],['Tracking','Monitoring'],
+      ['Governance','APIs'],['APIs','Backend'],
+      ['Pipelines','Monitoring'],['Automation','Monitoring'],['Automation','Pipelines']
+    ];
+    this.posMap = {}; this.NODES.forEach(n=>this.posMap[n.id]=n);
+
+    // ---- capability cluster graph ----
+    this.capDomains = [
+      {k:'AE',label:'Analytics Engineering',hub:[240,150],dot:'var(--violet)'},
+      {k:'DP',label:'Data Platform',hub:[660,150],dot:'var(--orange)'},
+      {k:'GQ',label:'Governance & Quality',hub:[240,350],dot:'var(--gold)'},
+      {k:'BI',label:'Backend & Integration',hub:[660,350],dot:'var(--green)'}
+    ];
+    this.capSkills = [
+      {k:'SQL',n:'SQL',d:[0]},{k:'Python',n:'Python',d:[0,3]},{k:'pyspark',n:'PySpark',d:[0]},{k:'modelling',n:'Data Modelling',d:[0]},{k:'mode',n:'Mode',d:[0]},{k:'tableau',n:'Tableau',d:[0]},
+      {k:'Databricks',n:'Databricks',d:[1]},{k:'Snowplow',n:'Snowplow',d:[1]},{k:'Avo',n:'Avo',d:[1]},{k:'Warehousing',n:'Warehousing',d:[1]},{k:'s3',n:'AWS S3',d:[1]},{k:'Pipelines',n:'Pipelines',d:[1]},
+      {k:'meta',n:'JSON Schema',d:[2]},{k:'Governance',n:'Governance',d:[2]},{k:'Tracking',n:'Tracking',d:[2]},{k:'Validation',n:'Validation',d:[2]},
+      {k:'APIs',n:'REST APIs',d:[3]},{k:'Git',n:'Git',d:[3]},{k:'Automation',n:'Automation',d:[3]},{k:'Backend',n:'Backend',d:[3]},{k:'Monitoring',n:'Monitoring',d:[3]}
+    ];
+    this.capLayout = this.computeCapLayout();
+
+    this.state = { theme:'dark', hover:null, capHover:null, openProject:0, openTimeline:0 };
+  }
+
+  computeCapLayout(){
+    const cx=450, cy=250, R=112;
+    const pos={};
+    // per-domain exclusive skills on outward arc
+    this.capDomains.forEach((dom,di)=>{
+      const ex=this.capSkills.filter(s=>s.d.length===1 && s.d[0]===di);
+      const base=Math.atan2(dom.hub[1]-cy, dom.hub[0]-cx);
+      const step=0.5;
+      ex.forEach((s,i)=>{
+        const ang=base+(i-(ex.length-1)/2)*step;
+        pos[s.k]=[dom.hub[0]+Math.cos(ang)*R, dom.hub[1]+Math.sin(ang)*R];
+      });
+    });
+    // shared skills at centroid of their hubs
+    this.capSkills.filter(s=>s.d.length>1).forEach(s=>{
+      let x=0,y=0; s.d.forEach(di=>{ x+=this.capDomains[di].hub[0]; y+=this.capDomains[di].hub[1]; });
+      pos[s.k]=[x/s.d.length, y/s.d.length];
+    });
+    return pos;
+  }
+
+  componentDidMount(){
+    this.reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+    let theme='dark';
+    try{ theme = localStorage.getItem('pr_theme')||'dark'; }catch(e){}
+    if(this.rootRef.current) this.rootRef.current.setAttribute('data-theme', theme);
+    this.setState({theme});
+    this.fields=[];
+    if(this.globalFieldRef.current) this.fields.push(this.setupField(this.globalFieldRef.current,false));
+    if(this.footerFieldRef.current) this.fields.push(this.setupField(this.footerFieldRef.current,true));
+    this.setupCounters();
+    this.setupTechHighlight();
+    this.setupMagnetic();
+    this.setupCmdLight();
+  }
+  componentWillUnmount(){
+    (this.fields||[]).forEach(f=>f&&f.destroy&&f.destroy());
+    window.removeEventListener('mousemove', this._mm);
+  }
+
+  animateCount(el){
+    const fmt=(v,dec)=> dec>0 ? v.toFixed(dec) : String(Math.round(v));
+    const num=+el.getAttribute('data-num')||0, dec=+el.getAttribute('data-dec')||0, suf=el.getAttribute('data-suf')||'';
+    if(this.reduced){ el.textContent=fmt(num,dec)+suf; return; }
+    const dur=900, t0=performance.now();
+    const step=(t)=>{ const p=Math.min(1,(t-t0)/dur); const e=1-Math.pow(1-p,3); el.textContent=fmt(num*e,dec)+suf; if(p<1) requestAnimationFrame(step); };
+    requestAnimationFrame(step);
+  }
+  setupCounters(){
+    const els=[...document.querySelectorAll('[data-count]')];
+    if(!els.length) return;
+    if(this.reduced){ els.forEach(el=>this.animateCount(el)); return; }
+    if(!('IntersectionObserver' in window)){ els.forEach(el=>{ el._done=true; this.animateCount(el); }); return; }
+    els.forEach(el=>{ const dec=+el.getAttribute('data-dec')||0; el.textContent=(dec>0?(0).toFixed(dec):'0'); });
+    const io=new IntersectionObserver((ents)=>{ ents.forEach(en=>{ if(en.isIntersecting && !en.target._done){ en.target._done=true; this.animateCount(en.target); io.unobserve(en.target); } }); },{threshold:0.35});
+    els.forEach(el=>io.observe(el));
+    this._io=io;
+    setTimeout(()=>els.forEach(el=>{ if(!el._done){ el._done=true; this.animateCount(el); } }),1800);
+  }
+
+  toggleTheme = ()=>{
+    const t = this.state.theme==='dark'?'light':'dark';
+    if(this.rootRef.current) this.rootRef.current.setAttribute('data-theme', t);
+    try{ localStorage.setItem('pr_theme', t); }catch(e){}
+    this.setState({theme:t});
+    (this.fields||[]).forEach(f=>f&&f.redraw&&f.redraw());
+  };
+
+  // Contained equalizer field: calmer, sparser, static (redraws only under a nearby cursor).
+  // animated=false → whole-page ambient field (near-invisible dots, sparse amber, pops under cursor)
+  // animated=true  → footer-only living field (slow shimmer of amber, denser toward bottom)
+  setupField(cv, animated){
+    const ctx=cv.getContext('2d');
+    let w,h,dpr,ml=null,mt=null,inside=false,pending=false,raf=null,visible=!animated,t0=performance.now();
+    const cell = animated?26:36, sq = animated?6:5;
+    const light=()=>this.rootRef.current && this.rootRef.current.getAttribute('data-theme')==='light';
+    const hash=(x,y)=>{ let n=Math.sin(x*127.1+y*311.7)*43758.5453; return n-Math.floor(n); };
+    const resize=()=>{ dpr=Math.min(window.devicePixelRatio||1,2); w=cv.clientWidth; h=cv.clientHeight; if(!w||!h) return; cv.width=w*dpr; cv.height=h*dpr; ctx.setTransform(dpr,0,0,dpr,0,0); if(!animated) draw(); };
+    const draw=(now)=>{
+      if(!w||!h) return;
+      const t=(now||performance.now())-t0;
+      ctx.clearRect(0,0,w,h);
+      const cols=Math.ceil(w/cell), rows=Math.ceil(h/cell);
+      for(let cxi=0;cxi<cols;cxi++){
+        for(let cyi=0;cyi<rows;cyi++){
+          const px=cxi*cell, py=cyi*cell, rnd=hash(cxi,cyi);
+          let near=0;
+          if(ml!=null){ const d=Math.hypot(px-ml,py-mt); near=Math.max(0,1-d/(animated?120:150)); }
+          let amber=false, a;
+          if(animated){
+            const depth=cyi/Math.max(1,rows-1);
+            const shimmer=0.5+0.5*Math.sin(t*0.0016 + cxi*0.5 + cyi*0.28);
+            const p=Math.max(0, depth*depth*0.72 - 0.05);
+            amber = rnd < p*shimmer;
+            if(near>0.5 && rnd<near*0.6) amber=true;
+            a = amber ? Math.min(0.8, 0.18+depth*0.4+near*0.3) : ((light()?0.05:0.035)+near*0.14);
+          } else {
+            const accent = rnd>0.978;
+            if(near>0.08){ amber=true; a=0.05+near*0.3; }
+            else if(accent){ amber=true; a=light()?0.09:0.08; }
+            else { amber=false; a=light()?0.03:0.022; }
+          }
+          ctx.fillStyle = amber ? `rgba(255,110,20,${a})` : (light()?`rgba(30,25,15,${a})`:`rgba(255,255,255,${a})`);
+          ctx.fillRect(px,py,sq,sq);
+        }
+      }
+      if(animated && visible && !this.reduced) raf=requestAnimationFrame(draw);
+    };
+    resize();
+    const onResize=()=>resize(); window.addEventListener('resize',onResize);
+    const mm=(e)=>{
+      const r=cv.getBoundingClientRect();
+      const x=e.clientX-r.left, y=e.clientY-r.top;
+      const within = x>-80 && x<r.width+80 && y>-80 && y<r.height+80;
+      if(within){ ml=x; mt=y; inside=true; if(!animated && !pending && !this.reduced){ pending=true; requestAnimationFrame(()=>{ pending=false; draw(); }); } }
+      else if(inside){ inside=false; ml=null; mt=null; if(!animated) draw(); }
+    };
+    if(!this.reduced) window.addEventListener('mousemove',mm,{passive:true});
+    let io=null;
+    if(animated && !this.reduced && ('IntersectionObserver' in window)){
+      io=new IntersectionObserver((ents)=>{ ents.forEach(en=>{ visible=en.isIntersecting; if(visible && !raf){ t0=performance.now(); raf=requestAnimationFrame(draw); } else if(!visible && raf){ cancelAnimationFrame(raf); raf=null; } }); },{threshold:0});
+      io.observe(cv);
+    } else if(animated){ draw(); }
+    return { redraw:()=>{ if(!animated) draw(); }, destroy:()=>{ window.removeEventListener('resize',onResize); window.removeEventListener('mousemove',mm); if(raf) cancelAnimationFrame(raf); if(io) io.disconnect(); } };
+  }
+
+  setupTechHighlight(){
+    const root=document;
+    const all=()=>root.querySelectorAll('[data-tech]');
+    const on=(val)=>{ all().forEach(el=>{ const m=el.getAttribute('data-tech')===val; el.style.opacity=m?'1':'.28'; if(m) el.style.color='var(--orange)'; }); };
+    const off=()=>{ all().forEach(el=>{ el.style.opacity=''; el.style.color=''; }); };
+    root.addEventListener('mouseover',(e)=>{ const t=e.target.closest && e.target.closest('[data-tech]'); if(t) on(t.getAttribute('data-tech')); });
+    root.addEventListener('mouseout',(e)=>{ const t=e.target.closest && e.target.closest('[data-tech]'); if(t) off(); });
+  }
+
+  setupMagnetic(){
+    if(this.reduced) return;
+    document.querySelectorAll('[data-magnetic]').forEach(el=>{
+      const s=0.1;
+      el.addEventListener('mousemove',(e)=>{ const r=el.getBoundingClientRect(); el.style.transform=`translate(${(e.clientX-r.left-r.width/2)*s}px,${(e.clientY-r.top-r.height/2)*s}px)`; });
+      el.addEventListener('mouseleave',()=>{ el.style.transform=''; });
+    });
+  }
+  setupCmdLight(){
+    document.querySelectorAll('.cmd').forEach(el=>{
+      el.addEventListener('mousemove',(e)=>{ const r=el.getBoundingClientRect(); el.style.setProperty('--mx',(e.clientX-r.left)+'px'); el.style.setProperty('--my',(e.clientY-r.top)+'px'); });
+    });
+  }
+
+  neighbors(id){ const s=new Set(); this.EDGES.forEach(([a,b])=>{ if(a===id)s.add(b); if(b===id)s.add(a); }); return [...s]; }
+  routePath(A,B){ const midx=(A.x+B.x)/2; return `M ${A.x} ${A.y} H ${midx} V ${B.y} H ${B.x}`; }
+
+  renderGraph(hover){
+    const R=React.createElement;
+    const conn=new Set(); if(hover){ conn.add(hover); this.neighbors(hover).forEach(n=>conn.add(n)); }
+    const edges=this.EDGES.map(([a,b],i)=>{
+      const A=this.posMap[a], B=this.posMap[b];
+      const active=hover&&(a===hover||b===hover);
+      const d=this.routePath(A,B);
+      if(active) return R('path',{key:'e'+i,d,fill:'none',stroke:'var(--orange)',strokeWidth:1.5,strokeDasharray:'3 6',style:{opacity:.9,animation:this.reduced?'none':'prDash 1.1s linear infinite'}});
+      return R('path',{key:'e'+i,d,fill:'none',stroke:'var(--grid-2)',strokeWidth:1.2,style:{opacity:hover?0.14:0.45,transition:'opacity .25s'}});
+    });
+    const nodes=this.NODES.map(n=>{
+      const dim=hover && !conn.has(n.id), on=hover && conn.has(n.id), isHover=hover===n.id, s=n.r;
+      const glyph = on
+        ? R('rect',{x:n.x-s*0.3,y:n.y-s*0.3,width:s*0.6,height:s*0.6,fill:'#fff'})
+        : R('text',{x:n.x,y:n.y,textAnchor:'middle',dominantBaseline:'central',fill:'var(--ink-2)',style:{fontFamily:"'Geist',sans-serif",fontWeight:800,fontSize:(s*0.85)+'px',pointerEvents:'none'}},n.id[0]);
+      return R('g',{key:n.id,'data-tech':n.id,style:{cursor:'pointer',opacity:dim?0.18:1,transition:'opacity .3s'},
+        onMouseEnter:()=>this.setState({hover:n.id}),
+        onClick:()=>this.setState(st=>({hover:st.hover===n.id?null:n.id}))},
+        R('rect',{x:n.x-s,y:n.y-s,width:s*2,height:s*2,fill:on?'var(--orange)':'var(--bg-3)',stroke:on?'var(--orange)':'var(--line-2)',strokeWidth:1.2,style:{transition:'fill .3s,stroke .3s'}}),
+        glyph,
+        R('text',{x:n.x,y:n.y+s+15,textAnchor:'middle',fill:on?'var(--ink)':'var(--ink-3)',style:{fontFamily:"'Geist Mono',monospace",fontSize:on?'12px':'10px',pointerEvents:'none',fontWeight:on?600:400,transition:'fill .3s'}},n.id)
+      );
+    });
+    return R('svg',{viewBox:'0 0 760 520',width:'100%',height:'100%',preserveAspectRatio:'xMidYMid meet',style:{display:'block',minHeight:'300px'},onMouseLeave:()=>this.setState({hover:null})}, ...edges, ...nodes);
+  }
+
+  renderCapGraph(capHover){
+    const R=React.createElement, pos=this.capLayout;
+    const hs = capHover ? this.capSkills.find(s=>s.k===capHover) : null;
+    const activeDoms = hs ? new Set(hs.d) : null;
+    const lines=[];
+    this.capSkills.forEach(s=>{
+      const p=pos[s.k]; if(!p) return;
+      s.d.forEach(di=>{
+        const hub=this.capDomains[di].hub;
+        const act = capHover===s.k;
+        const d=this.routePath({x:hub[0],y:hub[1]},{x:p[0],y:p[1]});
+        if(act) lines.push(R('path',{key:s.k+'-'+di,d,fill:'none',stroke:'var(--orange)',strokeWidth:1.5,strokeDasharray:'3 6',style:{opacity:.9,animation:this.reduced?'none':'prDash 1.1s linear infinite'}}));
+        else lines.push(R('path',{key:s.k+'-'+di,d,fill:'none',stroke:'var(--grid-2)',strokeWidth:1.2,style:{opacity:capHover?0.1:0.4,transition:'opacity .2s'}}));
+      });
+    });
+    const hubs=this.capDomains.map((dom,di)=>{
+      const act = activeDoms && activeDoms.has(di);
+      return R('g',{key:dom.k},
+        R('rect',{x:dom.hub[0]-26,y:dom.hub[1]-26,width:52,height:52,fill:'var(--bg-2)',stroke:act?'var(--orange)':'var(--line-2)',strokeWidth:1.4,style:{transition:'stroke .25s'}}),
+        R('rect',{x:dom.hub[0]-9,y:dom.hub[1]-9,width:18,height:18,fill:dom.dot}),
+        R('text',{x:dom.hub[0],y:dom.hub[1]+42,textAnchor:'middle',fill:act?'var(--ink)':'var(--ink-2)',style:{fontFamily:"'Geist Mono',monospace",fontSize:'11px',fontWeight:500,letterSpacing:'.1em',pointerEvents:'none',transition:'fill .25s'}},dom.k)
+      );
+    });
+    const skills=this.capSkills.map(s=>{
+      const p=pos[s.k]; if(!p) return null;
+      const primaryHub=this.capDomains[s.d[0]].hub;
+      const dx=p[0]-primaryHub[0], dy=p[1]-primaryHub[1], mag=Math.hypot(dx,dy)||1;
+      const lx=p[0]+(dx/mag)*14, ly=p[1]+(dy/mag)*14+3;
+      const anchor = dx>=0?'start':'end';
+      const on = capHover===s.k;
+      const dim = capHover && !on;
+      return R('g',{key:s.k,'data-tech':s.k,style:{cursor:'pointer',opacity:dim?0.24:1,transition:'opacity .2s'},
+        onMouseEnter:()=>this.setState({capHover:s.k}),
+        onMouseLeave:()=>this.setState({capHover:null})},
+        R('rect',{x:p[0]-6,y:p[1]-6,width:12,height:12,fill:on?'var(--orange)':'var(--bg-3)',stroke:on?'var(--orange)':'var(--line-2)',strokeWidth:1,style:{transition:'fill .2s,stroke .2s'}}),
+        on?R('rect',{x:p[0]-3,y:p[1]-3,width:6,height:6,fill:'#fff'}):null,
+        R('text',{x:lx,y:ly,textAnchor:anchor,fill:on?'var(--ink)':'var(--ink-2)',style:{fontFamily:"'Geist Mono',monospace",fontSize:on?'13px':'12px',fontWeight:on?600:400,pointerEvents:'none',transition:'fill .2s'}},s.n)
+      );
+    });
+    return R('svg',{viewBox:'0 0 900 480',width:'100%',preserveAspectRatio:'xMidYMid meet',style:{display:'block',minHeight:'360px'}}, ...lines, ...hubs, ...skills);
+  }
+
+  buildProjects(){
+    const P=[
+      {no:'01',title:'Avo Journeys → Databricks Genie',desc:'Connecting Avo and Databricks so Avo Journeys surface inside Genie spaces — letting engineers and analysts query implementations in natural language. Fragmented tracking knowledge becomes an AI-powered self-service analytics interface.',
+       flow:['Avo events','Extract','Metadata model','Genie layer','NL query'],
+       sections:[
+        {label:'Problem',body:'Tracking knowledge was scattered across tools; nobody could quickly answer "how is this instrumented?"'},
+        {label:'Architecture',body:'Avo API → governed metadata model → Databricks Genie space exposing natural-language querying.'},
+        {label:'Data flow',body:'Avo journeys & events → extraction → modelled metadata tables → Genie semantic layer → NL queries.'},
+        {label:'Stack',body:'Avo API, Databricks Genie, Python, metadata modelling.'},
+        {label:'Outcome',body:'Self-service analytics; far less time hunting for implementation truth.'},
+        {label:'Lessons',body:'A strong semantic/metadata layer is what makes AI querying trustworthy.'}
+       ]},
+      {no:'02',title:'Schema Centralisation',desc:'Consolidated scattered event schemas across brands, repositories and third-party systems into one governed source of truth — with ownership tracking, schema validation and access control.',
+       flow:['Distributed schemas','Normalise','Governed registry','Validation gate','Consumers'],
+       sections:[
+        {label:'Problem',body:'Event schemas lived across brands, repos and third parties with no source of truth.'},
+        {label:'Architecture',body:'One governed schema registry with ownership, validation and access control.'},
+        {label:'Data flow',body:'Distributed schemas → normalisation → governed registry → validation gates → downstream consumers.'},
+        {label:'Stack',body:'JSON Schema, Snowplow, Git, access control.'},
+        {label:'Outcome',body:'30% better consistency, recovered lost data and clear ownership.'},
+        {label:'Lessons',body:'Governance is a product, not a document.'}
+       ]},
+      {no:'03',title:'Third-Party API Delivery',desc:'Designed API integrations with external partners — JSON schema validation and automated ingestion pipelines that transformed unreliable external data into analytics-ready datasets.',
+       flow:['Partner APIs','Validate','S3 landing','Databricks','Analytics-ready'],
+       sections:[
+        {label:'Problem',body:'External partner data arrived inconsistently and unreliably.'},
+        {label:'Architecture',body:'REST integrations + JSON-schema validation + automated ingestion into the lakehouse.'},
+        {label:'Data flow',body:'Partner APIs → validation → S3 landing → Databricks ingestion → analytics-ready datasets.'},
+        {label:'Stack',body:'REST APIs, JSON, Databricks, AWS S3.'},
+        {label:'Outcome',body:'Reliable, analytics-ready external datasets on an automated pipeline.'},
+        {label:'Lessons',body:'Validate at the edge; trust compounds downstream.'}
+       ]}
+    ];
+    return P.map((p,i)=>({...p,
+      flow:p.flow.map((name,j)=>({name, notLast:j<p.flow.length-1})),
+      open:this.state.openProject===i, rot:this.state.openProject===i?'90deg':'0deg', action:this.state.openProject===i?'close':'open spec',
+      toggle:()=>this.setState(s=>({openProject:s.openProject===i?-1:i}))}));
+  }
+
+  buildTimeline(){
+    const T=[
+      {role:'Data Analyst',org:'Condé Nast',period:'Mar 2025 — Present',hash:'a4f9c1e',current:true,tech:['Avo','Databricks','SQL','Governance','APIs','Monitoring'],
+       sections:[
+        {label:'Impact',items:['Improved tracking consistency & governance by 30%','40% faster schema deployment','50% MTTR reduction','35% faster Databricks processing','Recovered 15% of lost data','20% better journey visibility']},
+        {label:'Systems & ownership',items:['Integrated Avo with Alation APIs','Supported 5+ teams','1M+ daily interactions at 99.9% accuracy','Authored 20+ internal documentation articles','25% faster onboarding']}
+       ]},
+      {role:'Associate Data Analyst',org:'Condé Nast',period:'Mar 2023 — Mar 2025',hash:'7b2e08d',current:false,tech:['SQL','Python','Tracking','Analytics','Automation'],
+       sections:[
+        {label:'Impact',items:['Automated 10+ reporting workflows','Saved 15 hours every week','Instrumented tracking for 50+ features']},
+        {label:'Collaboration',items:['Built product dashboards','Partnered with Product & Engineering teams']}
+       ]},
+      {role:'IT Analyst',org:'Hectronic Solutions',period:'Jul 2022 — Sep 2022',hash:'3c9a1f6',current:false,tech:['Automation','Monitoring'],
+       sections:[{label:'Scope',items:['Supported operational automation','Workflow validation','Technology monitoring']}]},
+      {role:'Associate Software Developer',org:'Chezuba',period:'Feb 2022 — Apr 2022',hash:'1e0d7b4',current:false,tech:['Backend','APIs'],
+       sections:[{label:'Scope',items:['Built responsive React interfaces','Implemented frontend features','Translated designs into production software']}]}
+    ];
+    return T.map((t,i)=>({...t,
+      dotBorder: t.current?'var(--orange)':'var(--line-2)',
+      dotFill: t.current?'var(--orange)':'var(--bg)',
+      open:this.state.openTimeline===i, rot:this.state.openTimeline===i?'90deg':'0deg',
+      toggle:()=>this.setState(s=>({openTimeline:s.openTimeline===i?-1:i}))}));
+  }
+
+  renderVals(){
+    const hover=this.state.hover;
+    let hoverData=null;
+    if(hover){ const n=this.posMap[hover]; hoverData={id:n.id,groupLabel:this.GROUPS[n.g].label,summary:n.summary,metrics:n.metrics}; }
+    const fmt=(v,dec)=> dec>0 ? v.toFixed(dec) : String(v);
+    const metricsRaw=[
+      {code:'core.years',num:3,suf:'+',dec:0,lbl:'Years building data systems'},
+      {code:'ingest.daily',num:1,suf:'M+',dec:0,lbl:'Daily interactions instrumented'},
+      {code:'track.accuracy',num:99.9,suf:'%',dec:1,lbl:'Tracking accuracy'},
+      {code:'auto.saved',num:15,suf:' hrs',dec:0,lbl:'Saved weekly via automation'},
+      {code:'track.features',num:50,suf:'+',dec:0,lbl:'Features instrumented'},
+      {code:'org.teams',num:5,suf:'+',dec:0,lbl:'Teams supported'},
+      {code:'compute.speed',num:35,suf:'%',dec:0,lbl:'Faster Databricks processing'},
+      {code:'reliab.mttr',num:50,suf:'%',dec:0,lbl:'MTTR reduction'},
+      {code:'deploy.speed',num:40,suf:'%',dec:0,lbl:'Faster deployments'},
+      {code:'onboard.speed',num:25,suf:'%',dec:0,lbl:'Faster onboarding'},
+      {code:'data.recovered',num:15,suf:'%',dec:0,lbl:'Lost data recovered'},
+      {code:'journey.vis',num:20,suf:'%',dec:0,lbl:'Better journey visibility'}
+    ];
+    const makeCubes=(seed)=>{ let x=seed*7919+13; const out=[]; for(let i=0;i<10;i++){ x=(x*9301+49297)%233280; const r=x/233280; out.push(i>=8?'var(--orange)':(r<0.32?'var(--orange-dim)':'var(--bg-3)')); } return out; };
+    const metrics=metricsRaw.map((m,i)=>({...m, disp:fmt(m.num,m.dec)+m.suf, cubes:makeCubes(i+1)}));
+    return {
+      themeIcon: this.state.theme==='dark'?'☾':'☀',
+      toggleTheme:this.toggleTheme,
+      rootRef:this.rootRef, globalFieldRef:this.globalFieldRef, footerFieldRef:this.footerFieldRef,
+      graph:this.renderGraph(hover),
+      capGraph:this.renderCapGraph(this.state.capHover),
+      capLegend:this.capDomains,
+      hasHover:!!hoverData, noHover:!hoverData, hoverData:hoverData||{id:'',groupLabel:'',summary:'',metrics:[]},
+      nodeCount:this.NODES.length, edgeCount:this.EDGES.length,
+      metrics,
+      systems:[
+        {title:'Governed source of truth',body:'Schema validation, ownership and access control so every downstream decision runs on data people can rely on.',stat:'30%',statLabel:'better consistency & governance'},
+        {title:'Instrumented at scale',body:'50+ features tracked across 1M+ daily interactions, held to a 99.9% accuracy bar with active monitoring.',stat:'1M+',statLabel:'daily interactions'},
+        {title:'Automation over toil',body:'Reporting workflows and ingestion automated end-to-end, freeing the team from manual, error-prone work.',stat:'15h',statLabel:'saved every week'}
+      ],
+      timeline:this.buildTimeline(),
+      projects:this.buildProjects(),
+      initiatives:[
+        {id:'W-01',status:'in progress',color:'var(--orange)',title:'Avo Journeys inside Genie',note:'Natural-language analytics over tracking implementations.'},
+        {id:'W-02',status:'scaling',color:'var(--ink-3)',title:'Governed schema coverage across brands',note:'Extending the source of truth to every property.'},
+        {id:'W-03',status:'hardening',color:'var(--ink-3)',title:'Lower MTTR with better monitoring',note:'Faster detection, clearer alerting, tighter incident loops.'},
+        {id:'W-04',status:'design',color:'var(--ink-3)',title:'Standardised data contracts for ingestion',note:'Predictable partner integrations, validated at the edge.'}
+      ],
+      endpoints:[
+        {method:'@',label:'Email',value:'priyanshuraj241001@gmail.com',href:'mailto:priyanshuraj241001@gmail.com'},
+        {method:'in',label:'LinkedIn',value:'/in/priyanshu-raj-7b1903195',href:'https://www.linkedin.com/in/priyanshu-raj-7b1903195/'},
+        {method:'{ }',label:'Résumé',value:'download PDF',href:'/resume.pdf'}
+      ],
+      roles:['Senior Data Analyst','Analytics Engineer','Backend Engineer','Data Platform'],
+      year:new Date().getFullYear()
+    };
+  }
+}
+</script>
+</body>
+</html>
