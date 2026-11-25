@@ -3,7 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="./analytics-lab.css?v=7">
 <script src="./support.js"></script>
+<script src="./analytics-lab.js?v=7" defer></script>
 </head>
 <body>
 <x-dc>
@@ -66,6 +68,11 @@
     #pr-os .hero-actions>a{justify-content:center}
     #pr-os .proj-flow{overflow-x:auto;flex-wrap:nowrap!important;-webkit-overflow-scrolling:touch;padding-bottom:6px}
     #pr-os .spec-row{grid-template-columns:1fr!important;gap:4px!important}
+    #pr-os .proj-row{grid-template-columns:auto 1fr!important;gap:6px 14px!important}
+    #pr-os .proj-row>div{min-width:0}
+    #pr-os .hdr-tag,#pr-os .hdr-status{display:none!important}
+    #pr-os header span{white-space:nowrap}
+    #pr-os .proj-row>span:last-child{grid-column:2;padding-top:4px!important}
     #pr-os .cap-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
     #pr-os .tl-row{padding-left:34px!important}
     #pr-os .disp{overflow-wrap:break-word}
@@ -88,7 +95,7 @@
     <div style="display:flex;align-items:center;gap:22px;padding:0 var(--padx);height:64px;max-width:1520px;margin:0 auto">
       <a href="#identity" style="display:flex;align-items:center;gap:12px;color:var(--ink)">
         <span style="font-size:16px;font-weight:700;letter-spacing:-.03em">Priyanshu Raj</span>
-        <span class="mono" style="font-size:9.5px;letter-spacing:.2em;color:var(--ink-3);text-transform:uppercase">Data Platform</span>
+        <span class="mono hdr-tag" style="font-size:9.5px;letter-spacing:.2em;color:var(--ink-3);text-transform:uppercase">Data Platform</span>
       </a>
       <div style="flex:1"></div>
       <nav class="mono" style="display:var(--nav-links);align-items:center;gap:22px;font-size:12px;letter-spacing:.04em">
@@ -98,7 +105,7 @@
         <a href="#history" style="color:var(--ink-2)">history</a>
         <a href="#projects" style="color:var(--ink-2)">work</a>
       </nav>
-      <div class="mono" style="display:flex;align-items:center;gap:8px;font-size:11px;letter-spacing:.05em;color:var(--ink-2)">
+      <div class="mono hdr-status" style="display:flex;align-items:center;gap:8px;font-size:11px;letter-spacing:.05em;color:var(--ink-2)">
         <span style="position:relative;width:6px;height:6px"><span style="position:absolute;inset:0;border-radius:50%;background:var(--green)"></span><span style="position:absolute;inset:0;border-radius:50%;background:var(--green);animation:prPulse 3s ease-out infinite"></span></span>
         available
       </div>
@@ -281,11 +288,19 @@
     <div data-reveal style="max-width:720px">
       <div class="eyebrow"><span style="color:var(--orange)">05</span><span>Selected work</span></div>
       <h2 class="sec-h">Documented like engineering.</h2>
+      <p style="color:var(--ink-2);font-size:15px;margin-top:20px;max-width:56ch;line-height:1.6;text-wrap:pretty">Interactive analytics case studies first, then the data-platform systems I run in production.</p>
     </div>
-    <div style="margin-top:clamp(40px,5vw,72px);border-top:1px solid var(--line-2)">
+    <!-- A · Analytics projects (rendered by analytics-lab.js) -->
+    <div data-al-root="" style="margin-top:clamp(40px,5vw,72px)"></div>
+    <!-- B · Data platform work -->
+    <div class="al-sub" style="margin-top:clamp(64px,8vw,120px)">
+      <div class="al-sub-l"><span class="al-sub-k">B</span><span>Data platform work</span><span class="al-sub-tag">in production</span></div>
+      <p class="al-sub-p">Systems I designed and run at work. Open any project for the full spec.</p>
+    </div>
+    <div style="margin-top:20px;border-top:1px solid var(--line-2)">
       <sc-for list="{{ projects }}" as="p" hint-placeholder-count="3">
         <div style="border-bottom:1px solid var(--line)">
-          <button onClick="{{ p.toggle }}" style="width:100%;text-align:left;padding:clamp(26px,3vw,44px) 0;display:grid;grid-template-columns:auto 1fr auto;gap:clamp(18px,3vw,40px);align-items:start;transition:opacity .2s" style-hover="opacity:.85">
+          <button onClick="{{ p.toggle }}" class="proj-row" style="width:100%;text-align:left;padding:clamp(26px,3vw,44px) 0;display:grid;grid-template-columns:auto 1fr auto;gap:clamp(18px,3vw,40px);align-items:start;transition:opacity .2s" style-hover="opacity:.85">
             <span class="disp mono" style="font-size:20px;color:var(--orange);padding-top:4px">{{ p.no }}</span>
             <div>
               <h3 style="font-size:clamp(24px,3vw,38px);letter-spacing:-.03em;font-weight:600;line-height:1.05">{{ p.title }}</h3>
